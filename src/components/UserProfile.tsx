@@ -1,24 +1,42 @@
 // src/components/UserProfile.tsx
-import { useSession } from 'next-auth/react';
 import React from 'react';
+import { useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
-const UserProfile: React.FC = () => {
-  const { data: session, status } = useSession();
+interface UserDetails {
+  name: string;
+  email: string;
+  picture: string;
+}
 
-  if (status === 'loading') {
-    return <p>Loading...</p>;
-  }
+const UserProfile = () => {
+  const { data: session } = useSession();
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
-  if (!session || !session.user) {
-    return <p>User is not logged in</p>;
-  }
+  useEffect(() => {
+    if (session?.accessToken) {
+      fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => setUserDetails(data))
+        .catch((error) => console.error('Error fetching user details:', error));
+    }
+  }, [session]);
 
   return (
     <div>
-      <h1>User Profile</h1>
-      {session.user.image && <img src={session.user.image} alt={session.user.name || 'User Image'} />}
-      <p>Name: {session.user.name}</p>
-      <p>Email: {session.user.email}</p>
+      {userDetails ? (
+        <div>
+          <p>Name: {userDetails.name}</p>
+          <p>Email: {userDetails.email}</p>
+          <img src={userDetails.picture} alt="Profile Picture" />
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };

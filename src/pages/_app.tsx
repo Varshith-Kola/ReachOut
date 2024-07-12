@@ -1,11 +1,12 @@
 // src/pages/_app.tsx
-import { AppProps } from 'next/app';
+import React from 'react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { SessionProvider, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { ChakraProvider } from '@chakra-ui/react';
-import '../app/globals.css'; // Correct path to the globals.css file
+import '../app/globals.css';
+import type { AppPropsWithAuth } from '../types/next-auth.d';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }: AppPropsWithAuth) {
   return (
     <ChakraProvider>
       <SessionProvider session={pageProps.session}>
@@ -21,7 +22,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-function Auth({ children }) {
+function Auth({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -31,7 +32,7 @@ function Auth({ children }) {
   }, [session, status, router]);
 
   if (session) {
-    return children;
+    return <>{children}</>;
   }
 
   return <p>Loading...</p>;

@@ -6,6 +6,7 @@ import {
   Flex,
   Avatar,
   Text,
+  Link,
   Button,
   Menu,
   MenuButton,
@@ -51,7 +52,9 @@ export default function Navbar() {
     <>
       <Box bg={useColorModeValue('gray.500', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-          <Box><Logo/></Box>
+          <Box>
+            <Link href="/feed"> <Logo/> </Link>
+          </Box>
 
           <Flex alignItems={'center'}>
             <Stack direction={'row'} spacing={7}>
@@ -81,7 +84,11 @@ export default function Navbar() {
                   </Center>
                   <br />
                   <MenuDivider />
-                  <MenuItem>Account Settings</MenuItem>
+                  <MenuItem>
+                    <Link href="/profile">
+                      <a>Account Settings</a>
+                    </Link>
+                  </MenuItem>
                   <MenuItem>Logout</MenuItem>
                 </MenuList>
               </Menu>
